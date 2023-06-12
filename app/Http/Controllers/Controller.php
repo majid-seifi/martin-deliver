@@ -9,4 +9,7 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
+    /**
+     * @OA\Info(title="Martin Deliver APIs", version="0.1")
+    */
 }
