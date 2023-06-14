@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DeliveryResource;
 use App\Models\Customer;
 use App\Models\Request as RequestModel;
 use App\Rules\LocationRule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -174,5 +176,124 @@ class RequestController extends Controller
             'address' => request()->get("{$prefix}_address"),
             'mobile' => request()->get("{$prefix}_mobile"),
         ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/requests",
+     *     summary="get list of requests for deliveries",
+     *     tags={"Request"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Requests array"
+     *     )
+     * )
+     */
+    /**
+     * get list of requests for deliveries
+     * @return AnonymousResourceCollection
+     */
+    public function requests()
+    {
+        $requests = RequestModel::where('status', 'registered')
+            ->whereNull('delivery_id')
+            ->orderByDesc('id')->get();
+
+        return DeliveryResource::collection($requests);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/request/accept/{id}",
+     *     summary="Accept request by deliveries",
+     *     tags={"Request"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Request ID",
+     *         required=true,
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Accepted successfully"
+     *     )
+     * )
+     */
+    /**
+     * Accept request by intermediaries
+     * @param RequestModel $requestModel
+     * @return JsonResponse
+     */
+    public function accept(RequestModel $requestModel)
+    {
+        return $this->_deliveryAction(RequestModel::STATUS_ACCEPTED, $requestModel);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/request/sent/{id}",
+     *     summary="Send request by deliveries",
+     *     tags={"Request"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Request ID",
+     *         required=true,
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Sent successfully"
+     *     )
+     * )
+     */
+    public function sent(RequestModel $requestModel)
+    {
+        return $this->_deliveryAction(RequestModel::STATUS_SENT, $requestModel);
+    }
+
+    /**
+     * @OA\Patch(
+     *     path="/request/delivered/{id}",
+     *     summary="Deliver request by deliveries",
+     *     tags={"Request"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Request ID",
+     *         required=true,
+     *      ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Delivered successfully"
+     *     )
+     * )
+     */
+    public function deliver(RequestModel $requestModel)
+    {
+        return $this->_deliveryAction(RequestModel::STATUS_DELIVERED, $requestModel);
+    }
+
+    /**
+     * delivery actions
+     * @param RequestModel $requestModel
+     * @return JsonResponse
+     */
+    private function _deliveryAction(string $type, RequestModel $requestModel)
+    {
+        try {
+            $requestModel->status = $type;
+            if ($type === RequestModel::STATUS_ACCEPTED) {
+                $requestModel->delivery_id = Auth::id();
+            }
+            $requestModel->save();
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => "Not saved error: {$e->getMessage()}",
+            ], Response::HTTP_CREATED);
+        }
+        return response()->json([
+            'message' => "Request $type successfully",
+        ], Response::HTTP_OK);
     }
 }

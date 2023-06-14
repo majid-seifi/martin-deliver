@@ -28,4 +28,19 @@ class Request extends Model
         'delivery_id',
         'status',
     ];
+
+    public function intermediary(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
+    public function sender(): BelongsTo {
+        return $this->belongsTo(Customer::class)
+            ->selectRaw(Customer::SELECT_RAW);
+    }
+    public function recipient(): BelongsTo {
+        return $this->belongsTo(Customer::class)
+            ->selectRaw(Customer::SELECT_RAW);
+    }
+    public function delivery(): BelongsTo {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -71,5 +71,6 @@ class Kernel extends HttpKernel
 
         'request.owner' => \App\Http\Middleware\RequestOwnerMiddleware::class,
         'request.cancelable' => \App\Http\Middleware\CancelableRequestMiddleware::class,
+        'request.status' => \App\Http\Middleware\RequestStatusMiddleware::class,
     ];
 }
