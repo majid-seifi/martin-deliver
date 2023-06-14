@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\RequestStatusChangeEvent;
 use App\Events\RoleAssignedEvent;
+use App\Listeners\CallIntermediaryWebhookListener;
 use App\Listeners\CreateIntermediaryListener;
+use App\Models\Request;
+use App\Observers\RequestObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        RequestStatusChangeEvent::class => [
+            CallIntermediaryWebhookListener::class,
+        ],
         RoleAssignedEvent::class => [
             CreateIntermediaryListener::class,
         ],
@@ -30,7 +37,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Request::observe(RequestObserver::class);
     }
 
     /**

@@ -43,4 +43,8 @@ class Request extends Model
     public function delivery(): BelongsTo {
         return $this->belongsTo(User::class);
     }
+
+    public function webhook(): string {
+        return $this->belongsTo(Intermediary::class, 'intermediary_id', 'intermediary_id')->first()->webhook;
+    }
 }
