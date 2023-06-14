@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "My First API",
+        "title": "Martin Deliver APIs",
         "version": "0.1"
     },
     "servers": [
@@ -38,6 +38,197 @@
                         "description": "OK"
                     }
                 }
+            }
+        },
+        "/delivery/log": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Save delivery location",
+                "operationId": "7b3f1872c79b0e69f66d911636fda045",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "location": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created successfully"
+                    }
+                }
+            }
+        },
+        "/request/register": {
+            "post": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Register request by intermediaries",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "sender_name": {
+                                        "type": "string"
+                                    },
+                                    "sender_location": {
+                                        "type": "string"
+                                    },
+                                    "sender_address": {
+                                        "type": "string"
+                                    },
+                                    "sender_mobile": {
+                                        "type": "string"
+                                    },
+                                    "recipient_name": {
+                                        "type": "string"
+                                    },
+                                    "recipient_location": {
+                                        "type": "string"
+                                    },
+                                    "recipient_address": {
+                                        "type": "string"
+                                    },
+                                    "recipient_mobile": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created successfully"
+                    }
+                }
+            }
+        },
+        "/request/{id}": {
+            "delete": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Cancel request by intermediaries",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Request ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Canceled successfully"
+                    }
+                }
+            }
+        },
+        "/requests": {
+            "get": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "get list of requests for deliveries",
+                "responses": {
+                    "200": {
+                        "description": "Requests array"
+                    }
+                }
+            }
+        },
+        "/request/accept/{id}": {
+            "patch": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Accept request by deliveries",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Request ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Accepted successfully"
+                    }
+                }
+            }
+        },
+        "/request/sent/{id}": {
+            "patch": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Send request by deliveries",
+                "operationId": "a5b163a5c8bb38b23df5dbee9fa6c90d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Request ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sent successfully"
+                    }
+                }
+            }
+        },
+        "/request/delivered/{id}": {
+            "patch": {
+                "tags": [
+                    "Request"
+                ],
+                "summary": "Deliver request by deliveries",
+                "operationId": "9d28a7a69e242f1ea87a4d5dc4b78641",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Request ID",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delivered successfully"
+                    }
+                }
+            }
+        }
+    },
+    "security": [
+        {
+            "sanctum": []
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "sanctum": {
+                "type": "http",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header",
+                "scheme": "bearer"
             }
         }
     }
