@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeliveryLogController;
 use App\Http\Controllers\RequestController;
 use App\Models\Request as RequestModel;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,8 @@ Route::middleware('api')->group(function () {
                 Route::patch('request/delivered/{requestModel}', [RequestController::class, 'delivered'])
                     ->middleware('request.status:' . RequestModel::STATUS_SENT);
             });
+
+            Route::post('delivery/log', array(DeliveryLogController::class, 'store'));
         });
     });
 });
