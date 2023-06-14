@@ -3,7 +3,10 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +15,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // intermediary test users
+        Role::create(['name' => 'Intermediary']);
+        $intermediaries = User::factory()
+            ->count(3)
+            ->sequence(fn($sequence) => [
+                'name' => 'Intermediary User ' . ($sequence->index + 1),
+                'email' => 'intermediary' . ($sequence->index + 1) . '@example.test',
+            ])
+            ->create();
+        foreach ($intermediaries as $intermediary)
+            $intermediary->assignRole('Intermediary');
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // delivery test users
+        Role::create(['name' => 'Delivery']);
+        $deliveries = User::factory()
+            ->count(3)
+            ->sequence(fn($sequence) => [
+                'name' => 'Delivery User ' . ($sequence->index + 1),
+                'email' => 'delivery' . ($sequence->index + 1) . '@example.test',
+            ])
+            ->create();
+        foreach ($deliveries as $delivery)
+            $delivery->assignRole('Delivery');
     }
 }
