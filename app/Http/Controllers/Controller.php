@@ -11,5 +11,10 @@ class Controller extends BaseController
     use AuthorizesRequests, ValidatesRequests;
     /**
      * @OA\Info(title="Martin Deliver APIs", version="0.1")
+     * @OA\OpenApi(
+     *   security={
+     *     {"sanctum":{}}
+     *   }
+     * )
     */
 }
